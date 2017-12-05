@@ -55,7 +55,7 @@ static int amd_unlock_addr1(urj_flash_cfi_array_t *cfi_array) {
     return 0x0555;
   } else if (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
 	     == CFI_VENDOR_SST_WEIRD) {
-    return 0x0555;
+    return 0x5555;
   } else {
     return 0;
   }
