@@ -52,7 +52,7 @@
 static int amd_unlock_addr1(urj_flash_cfi_array_t *cfi_array) {
   if (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
       == CFI_VENDOR_AMD_SCS) {
-    return 0x5555;
+    return 0x0555;
   } else if (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
 	     == CFI_VENDOR_SST_WEIRD) {
     return 0x0555;
@@ -64,10 +64,10 @@ static int amd_unlock_addr1(urj_flash_cfi_array_t *cfi_array) {
 static int amd_unlock_addr2(urj_flash_cfi_array_t *cfi_array) {
   if (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
       == CFI_VENDOR_AMD_SCS) {
-    return 0x2AAA;
+    return 0x02AA;
   } else if (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
 	     == CFI_VENDOR_SST_WEIRD) {
-    return 0x02AA;
+    return 0x2AAA;
   } else {
     return 0;
   }

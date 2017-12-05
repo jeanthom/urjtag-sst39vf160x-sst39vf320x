@@ -87,7 +87,7 @@ typedef struct cfi_query_identification_string
 #define CFI_VENDOR_MITSUBISHI_SCS       0x0100
 #define CFI_VENDOR_MITSUBISHI_ECS       0x0101
 #define CFI_VENDOR_SST_PWCS             0x0102
-#define CFI_VENDOR_SST_WEIRD            0x0107
+#define CFI_VENDOR_SST_WEIRD            0x0701
 
 /* Query system interface information - see 4.3.3 in [1] */
 
