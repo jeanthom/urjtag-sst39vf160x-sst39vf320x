@@ -117,6 +117,18 @@ urj_flash_amd_detect (urj_bus_t *bus, uint32_t adr,
     did = URJ_BUS_READ (bus, adr + 0x1);
     URJ_BUS_WRITE (bus, adr + 0x0, 0xf0);
 
+    /* SST custom addresses */
+    if (mid != 0x01)
+    {
+        urj_log (URJ_LOG_LEVEL_NORMAL, "Trying special SST addresses\n");
+	URJ_BUS_WRITE (bus, adr + 0x5555, 0xaa);
+	URJ_BUS_WRITE (bus, adr + 0x2AAA, 0x55);
+	URJ_BUS_WRITE (bus, adr + 0x5555, 0x90);
+	mid = URJ_BUS_READ (bus, adr + 0x0);
+	did = URJ_BUS_READ (bus, adr + 0x1);
+	URJ_BUS_WRITE (bus, adr + 0x0, 0xf0);
+    }
+
     urj_log (URJ_LOG_LEVEL_NORMAL, "%s: mid %x, did %x\n", __func__, mid, did);
     if (mid != 0x01)
     {

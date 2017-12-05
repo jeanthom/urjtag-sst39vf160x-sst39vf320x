@@ -148,6 +148,27 @@ urj_flash_cfi_detect (urj_bus_t *bus, uint32_t adr,
             write1 (0, CFI_CMD_READ_ARRAY2);
         }
 
+	/* SST 39VF320x/39VF160x trick */
+	if (ma > 4)
+	{
+	  for (ma = 1; ma <= 4; ma *= 2)
+	  {
+	      write1 (0x5555, 0xAA);
+	      write1 (0x2AAA, 0x55);
+	      write1 (0x5555, CFI_CMD_QUERY);
+
+	      if (read1 (CFI_QUERY_ID_OFFSET) == 'Q')
+	      {
+                  ret = -5;       /* CFI not detected (R) */
+                  if (read1 (CFI_QUERY_ID_OFFSET + 1) == 'R')
+                      break;
+	      }
+
+	      write1 (0, CFI_CMD_READ_ARRAY1);
+	      write1 (0, CFI_CMD_READ_ARRAY2);
+	  }
+	}
+
         if (ma > 4)
         {
             if (ret == -4)

@@ -49,6 +49,29 @@
 #include "cfi.h"
 #include "amd.h"
 
+static int amd_unlock_addr1(urj_flash_cfi_array_t *cfi_array) {
+  if (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
+      == CFI_VENDOR_AMD_SCS) {
+    return 0x5555;
+  } else if (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
+	     == CFI_VENDOR_SST_WEIRD) {
+    return 0x0555;
+  } else {
+    return 0;
+  }
+}
+
+static int amd_unlock_addr2(urj_flash_cfi_array_t *cfi_array) {
+  if (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
+      == CFI_VENDOR_AMD_SCS) {
+    return 0x2AAA;
+  } else if (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
+	     == CFI_VENDOR_SST_WEIRD) {
+    return 0x02AA;
+  } else {
+    return 0;
+  }
+}
 
 /* The code below assumes a connection of the flash chip address LSB (A0)
  * to A0, A1 or A2 of the byte-addressed CPU bus dependent on the bus width.
@@ -111,7 +134,9 @@ amd_flash_autodetect16 (urj_flash_cfi_array_t *cfi_array)
     if (cfi_array->bus_width != 2)
         return 0;
     return (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
-            == CFI_VENDOR_AMD_SCS);
+            == CFI_VENDOR_AMD_SCS || \
+	    cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
+	    == CFI_VENDOR_SST_WEIRD);
 }
 
 static int
@@ -280,10 +305,11 @@ amdisprotected (parts * ps, urj_flash_cfi_array_t *cfi_array,
     uint32_t data;
     int o = amd_flash_address_shift (cfi_array);
 
-    URJ_BUS_WRITE (ps, cfi_array->address + (0x0555 << o), 0x00aa00aa);       /* autoselect p29, sector erase */
-    URJ_BUS_WRITE (ps, cfi_array->address + (0x02aa << o),
+    URJ_BUS_WRITE (ps, cfi_array->address + (amd_unlock_addr1(cfi_array) << o),
+		   0x00aa00aa);       /* autoselect p29, sector erase */
+    URJ_BUS_WRITE (ps, cfi_array->address + (amd_unlock_addr2(cfi_array) << o),
                    0x00550055);
-    URJ_BUS_WRITE (ps, cfi_array->address + (0x0555 << o),
+    URJ_BUS_WRITE (ps, cfi_array->address + (amd_unlock_addr1(cfi_array) << o),
                    0x00900090);
 
     data = URJ_BUS_READ (ps, adr + (0x0002 << 2));
@@ -301,9 +327,12 @@ amd_flash_print_info (urj_log_level_t ll, urj_flash_cfi_array_t *cfi_array)
     urj_bus_t *bus = cfi_array->bus;
     int o = amd_flash_address_shift (cfi_array);
 
-    URJ_BUS_WRITE (bus, cfi_array->address + (0x0555 << o), 0x00aa00aa);      /* autoselect p29 */
-    URJ_BUS_WRITE (bus, cfi_array->address + (0x02aa << o), 0x00550055);
-    URJ_BUS_WRITE (bus, cfi_array->address + (0x0555 << o), 0x00900090);
+    URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr1(cfi_array) << o),
+		   0x00aa00aa);      /* autoselect p29 */
+    URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr2(cfi_array) << o),
+		   0x00550055);
+    URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr1(cfi_array) << o),
+		   0x00900090);
     mid = URJ_BUS_READ (bus, cfi_array->address + (0x00 << o)) & 0xFFFF;
     cid = URJ_BUS_READ (bus, cfi_array->address + (0x01 << o)) & 0xFFFF;
     prot = URJ_BUS_READ (bus, cfi_array->address + (0x02 << o)) & 0xFF;
@@ -416,6 +445,28 @@ amd_flash_print_info (urj_log_level_t ll, urj_flash_cfi_array_t *cfi_array)
             break;
         }
         break;
+    case 0x00BF:
+        urj_log (ll, "SST");
+	urj_log (ll, _("\n\tChip: "));
+	switch (cid)
+	{
+	case 0x234B:
+            urj_log (ll, "SST39VF1601");
+	    break;
+	case 0x234A:
+	    urj_log (ll, "SST39VF1602");
+	    break;
+	case 0x235B:
+	    urj_log (ll, "SST39VF3201");
+	    break;
+	case 0x235A:
+	    urj_log (ll, "SST39VF3202");
+	    break;
+	default:
+	    urj_log (ll, _("Unknown (ID 0x%04x)"), cid);
+	    break;
+	}
+	break;
     default:
         urj_log (ll, _("Unknown manufacturer (ID 0x%04x) Chip (ID 0x%04x)"),
                  mid, cid);
@@ -438,11 +489,16 @@ amd_flash_erase_block (urj_flash_cfi_array_t *cfi_array, uint32_t adr)
 
     /*      urj_log (URJ_LOG_LEVEL_NORMAL, "protected: %d\n", amdisprotected(ps, cfi_array, adr)); */
 
-    URJ_BUS_WRITE (bus, cfi_array->address + (0x0555 << o), 0x00aa00aa);      /* autoselect p29, sector erase */
-    URJ_BUS_WRITE (bus, cfi_array->address + (0x02aa << o), 0x00550055);
-    URJ_BUS_WRITE (bus, cfi_array->address + (0x0555 << o), 0x00800080);
-    URJ_BUS_WRITE (bus, cfi_array->address + (0x0555 << o), 0x00aa00aa);
-    URJ_BUS_WRITE (bus, cfi_array->address + (0x02aa << o), 0x00550055);
+    URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr1(cfi_array) << o),
+		   0x00aa00aa);      /* autoselect p29, sector erase */
+    URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr2(cfi_array) << o),
+		   0x00550055);
+    URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr1(cfi_array) << o),
+		   0x00800080);
+    URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr1(cfi_array) << o),
+		   0x00aa00aa);
+    URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr2(cfi_array) << o),
+		   0x00550055);
     URJ_BUS_WRITE (bus, adr, 0x00300030);
 
     if (amdstatus (cfi_array, adr, 0xffff) == URJ_STATUS_OK)
@@ -488,9 +544,12 @@ amd_flash_program_single (urj_flash_cfi_array_t *cfi_array, uint32_t adr,
     urj_log (URJ_LOG_LEVEL_DEBUG, "\nflash_program 0x%08lX = 0x%08lX\n",
              (long unsigned) adr, (long unsigned) data);
 
-    URJ_BUS_WRITE (bus, cfi_array->address + (0x0555 << o), 0x00aa00aa);      /* autoselect p29, program */
-    URJ_BUS_WRITE (bus, cfi_array->address + (0x02aa << o), 0x00550055);
-    URJ_BUS_WRITE (bus, cfi_array->address + (0x0555 << o), 0x00A000A0);
+    URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr1(cfi_array) << o),
+		   0x00aa00aa);      /* autoselect p29, program */
+    URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr2(cfi_array) << o),
+		   0x00550055);
+    URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr1(cfi_array) << o),
+		   0x00A000A0);
 
     URJ_BUS_WRITE (bus, adr, data);
     status = amdstatus (cfi_array, adr, data);
@@ -563,8 +622,10 @@ amd_flash_program_buffer (urj_flash_cfi_array_t *cfi_array, uint32_t adr,
         if (wcount > count)
             wcount = count;
 
-        URJ_BUS_WRITE (bus, cfi_array->address + (0x0555 << o), 0x00aa00aa);
-        URJ_BUS_WRITE (bus, cfi_array->address + (0x02aa << o), 0x00550055);
+        URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr1(cfi_array) << o),
+		       0x00aa00aa);
+        URJ_BUS_WRITE (bus, cfi_array->address + (amd_unlock_addr2(cfi_array) << o),
+		       0x00550055);
         URJ_BUS_WRITE (bus, adr, 0x00250025);
         URJ_BUS_WRITE (bus, sa, wcount - 1);
 
