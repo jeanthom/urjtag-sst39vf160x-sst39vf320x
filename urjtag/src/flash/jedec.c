@@ -80,6 +80,10 @@
 /* SST */
 #define SST39LF800      0x2781
 #define SST39LF160      0x2782
+#define SST39VF1601     0x234B
+#define SST39VF1602     0x234A
+#define SST39VF3201     0x235B
+#define SST39VF3202     0x235A
 
 /* Toshiba */
 #define TC58FVT160      0x00C2
@@ -421,6 +425,46 @@ static const struct amd_flash_info table[] = {
         .regions = {
             { .offset = 0x000000, .erasesize = 0x10000, .numblocks = 16 },
         }
+    }, {
+       .mfr_id = MANUFACTURER_SST,
+       .dev_id = SST39VF3201,
+       .name = "SST 39VF3201",
+       .size = 0x00400000,
+       .interface_width = CFI_INTERFACE_X16,
+       .numeraseregions = 1,
+       .regions = {
+           { .offset = 0x000000, .erasesize = 0x8000, .numblocks = 128 }
+       }
+    }, {
+       .mfr_id = MANUFACTURER_SST,
+       .dev_id = SST39VF3202,
+       .name = "SST 39VF3202",
+       .size = 0x00400000,
+       .interface_width = CFI_INTERFACE_X16,
+       .numeraseregions = 1,
+       .regions = {
+           { .offset = 0x000000, .erasesize = 0x8000, .numblocks = 128 }
+       }
+    }, {
+       .mfr_id = MANUFACTURER_SST,
+       .dev_id = SST39VF1601,
+       .name = "SST 39VF1601",
+       .size = 0x00200000,
+       .interface_width = CFI_INTERFACE_X16,
+       .numeraseregions = 1,
+       .regions = {
+           { .offset = 0x000000, .erasesize = 0x8000, .numblocks = 64 }
+       }
+    }, {
+       .mfr_id = MANUFACTURER_SST,
+       .dev_id = SST39VF1602,
+       .name = "SST 39VF1602",
+       .size = 0x00200000,
+       .interface_width = CFI_INTERFACE_X16,
+       .numeraseregions = 1,
+       .regions = {
+           { .offset = 0x000000, .erasesize = 0x8000, .numblocks = 64 }
+       }
     }
 };
 

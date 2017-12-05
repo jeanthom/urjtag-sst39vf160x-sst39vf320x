@@ -114,6 +114,7 @@ urj_flash_detectflash (urj_log_level_t ll, urj_bus_t *bus, uint32_t adr)
         s = N_("Intel/Sharp Extended Command Set");
         break;
     case CFI_VENDOR_AMD_SCS:
+    case CFI_VENDOR_SST_WEIRD:
         s = N_("AMD/Fujitsu Standard Command Set");
         break;
     case CFI_VENDOR_INTEL_SCS:
@@ -146,6 +147,7 @@ urj_flash_detectflash (urj_log_level_t ll, urj_bus_t *bus, uint32_t adr)
         s = N_("Intel/Sharp Extended Command Set");
         break;
     case CFI_VENDOR_AMD_SCS:
+    case CFI_VENDOR_SST_WEIRD:
         s = N_("AMD/Fujitsu Standard Command Set");
         break;
     case CFI_VENDOR_INTEL_SCS:
