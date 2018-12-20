@@ -53,6 +53,8 @@ _URJ_CABLE(ft2232_flyswatter)
 _URJ_CABLE(ft2232_gnice)
 _URJ_CABLE(ft2232_gniceplus)
 _URJ_CABLE(ft2232_jtagkey)
+_URJ_CABLE(ft2232_jtagv3)
+_URJ_CABLE(ft2232_jtagv5)
 _URJ_CABLE(ft2232_ktlink)
 _URJ_CABLE(ft2232_milkymist)
 _URJ_CABLE(ft2232_oocdlinks)
@@ -66,6 +68,9 @@ _URJ_CABLE(ft2232_ft4232)
 #endif
 #ifdef ENABLE_CABLE_GPIO
 _URJ_CABLE(gpio)
+#endif
+#ifdef ENABLE_CABLE_BSDGPIO
+_URJ_CABLE(bsdgpio)
 #endif
 #ifdef ENABLE_CABLE_ICE100
 _URJ_CABLE(ice100B)

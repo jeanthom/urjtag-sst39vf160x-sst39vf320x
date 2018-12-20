@@ -1,0 +1,25 @@
+#
+# .travis.yml
+# https://travis-ci.com/plans
+#
+
+language: c
+
+sudo: false
+
+compiler:
+  - gcc
+
+addons:
+  apt:
+    packages:
+    - autopoint
+    - gettext
+
+script: |
+        cd urjtag 
+        sed --in-place -e '/GETTEXT_VERSION/s/0.19/0.18/' configure.ac
+        ./autogen.sh
+        make
+
+# l l

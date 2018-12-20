@@ -1,7 +1,7 @@
 #
 # $Id$
 #
-# Copyright (C) 2007, 2008 Kolja Waschk and other
+# Copyright (C) 2007, 2018 Kolja Waschk and other
 #    UrJTAG.org developers, (C) 2002, 2003 ETC s.r.o.
 #
 # This program is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 #  and other UrJTAG authors, 2007, 2008, ...
 #
 
-AC_INIT([UrJTAG], [0.10], [http://urjtag.org], [urjtag])
+AC_INIT([UrJTAG], [2018.09], [http://urjtag.org], [urjtag])
 
 dnl autoconf-2.64 was released in 2008
 AC_PREREQ(2.64)
@@ -151,6 +151,7 @@ int sa_flags = SA_ONESHOT;
 
 AC_CHECK_HEADERS([linux/ppdev.h], [HAVE_LINUX_PPDEV_H="yes"])
 AC_CHECK_HEADERS([dev/ppbus/ppi.h], [HAVE_DEV_PPBUS_PPI_H="yes"])
+AC_CHECK_HEADERS([libgpio.h], [HAVE_DEV_BSDGPIO_H="yes"])
 AC_CHECK_HEADERS(m4_flatten([
 	wchar.h
 	windows.h
@@ -225,6 +226,7 @@ AS_IF([test "x$with_libusb" != xno], [
 AC_SUBST(LIBUSB_LIBS)
 AM_CONDITIONAL(HAVE_LIBUSB, [test "x$HAVELIBUSB" != "xno"])
 
+AS_IF([test "x$HAVE_DEV_BSDGPIO_H" = xyes], [LIBS="-lgpio $LIBS"])
 
 dnl Use FTDI library?
 
@@ -294,6 +296,14 @@ AS_IF([test "x$with_ftd2xx" = xyes -o "x$with_ftd2xx" = xcheck], [
   AS_IF([test "x$with_ftd2xx" != xno], [
     HAVELIBFTD2XX=yes
     case $host in
+    *x86_64*cygwin*|*x86_64*mingw*)
+      CFLAGS="$CFLAGS -I$with_ftd2xx"
+      AS_IF([test -d "$with_ftd2xx/amd64"], [
+        FTD2XXLIB="-L$with_ftd2xx/amd64 -l:ftd2xx.lib"
+      ],[
+        FTD2XXLIB="-L$with_ftd2xx -l:ftd2xx.lib"
+      ])
+      ;;
     *cygwin*|*mingw*)
       CFLAGS="$CFLAGS -I$with_ftd2xx"
       AS_IF([test -d "$with_ftd2xx/i386"], [
@@ -652,6 +662,7 @@ URJ_DRIVER_SET([cable], [
 	ei012
 	ft2232
 	gpio
+	bsdgpio
 	ice100
 	igloo
 	jlink
@@ -682,6 +693,9 @@ URJ_DRIVER_SET([cable], [
 	])
 	AS_IF([test "x$ac_cv_func_pread" != "xyes"], [
 		drivers=`echo ${drivers} | $SED -e s/gpio//`
+	])
+	AS_IF([test "x$HAVE_DEV_BSDGPIO_H" != "xyes"], [
+		drivers=`echo ${drivers} | $SED -e s/bsdgpio//`
 	])
 ])
 dnl the "fake" jim cable driver is special

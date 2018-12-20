@@ -1,3 +1,71 @@
+2018-09-21 Geert Stappers <stappers@stappers.it>
+ * Released  2018.09
+
+2018-09-21 Andreas Moog <andreas.moog@warperbbs.de>
+ * Prefix all REG_* with BFIN_REG, closed bug#119
+
+2018-06-27 Milan Prochac <milan@prochac.sk>
+
+ * Added J-Link interface select, closes bug#127
+
+2018-06-19 Geert Stappers <stappers@stappers.nl>
+
+ * Released  2018.06
+
+2018-06-19 zmatkar <zmatkar@users.sourceforge.net>
+
+ * Enhancement#123 JTAGv3 and v5 cables driver
+
+2018-06-19 Marton Miklos <martonmiklos@users.sf.net>
+ * Document the 0x to enforce hexadecimal, closes bug#112
+
+2018-06-18 Jose Vasconcellos <matein4@users.sf.net>
+ * Support ixp425 stepping B1, closes bug#111
+
+2018-03-24 Jiri Gaisler <jiri@gaisler.se>
+ * Code clean-up: remove double const keywords.
+
+2018-03-24 kuenzerj <Jens.Kuenzer@fpga.homeip.net>
+ * LIBFTD2XX for x86_64*cygwin is not in i386 directory so use amd64
+ * pull in all required libraries in python setup.py
+
+2018-03-24 Hiroki Mori <yamori813@yahoo.co.jp>
+ * add freebsd gpio support
+ * fix error message on PPISCTRL
+
+2018-03-21 Jiri Gaisler <jiri@gaisler.se>
+ * Allow python bindings to be built using VPATH.
+
+2018-03-21 Geert Stappers <stappers@stappers.nl>
+  * the actual release of 2017.10
+
+2018-03-09 Jiri Kastner <cz172638@gmail.com>
+  * add files to dist tarball, to get 2017.10 released
+
+2017-10-18 Jean THOMAS <git0@pub.jeanthomas.me>
+  * Support files for DirtyJTAG
+
+2017-07-12 Steve Tell <tell@telltronics.org>
+  * documentation: adding a new cable driver
+  * new cable driver: FTDI FT4232
+
+2017-06-30 Steve Tell <tell@telltronics.org>
+  * changing TCK frequency of ARM-USB-OCD-H
+
+2017-06-26 Steve Tell <tell@telltronics.org>
+  * python binding additions and fixes
+
+2017-05-18 Jan Willeke <willeke@smartmote.de>
+  * enumerated GPIO_REQUIRED blocks using pin 4
+
+2017-05-07 Benjamin Henrion <zoobab@gmail.com>
+  * src/tap/cable/vsllink.c: versaloon URL updated
+
+2017-03-12 ARE <ake.rehnman@gmail.com>
+  * Inclusion of windows.h was moved out from sysdep.h and added to direct.c and libftd2xx.c
+  * -no-undefined was added to src/Makefile to allow dynamic linking of ftd2xx
+  * Changed configure.ac to make libtool linking work with cygwin/mingw and ftd2xx.
+
 2017-03-01 Tomek CEDRO <CeDeROM@tlen.pl>
   * acinclude.m4: Reverted AS_VAR_APPEND macro that broke autoconf-2.69
     build (introduced 2010-02-03).
