@@ -54,7 +54,7 @@ static int amd_unlock_addr1(urj_flash_cfi_array_t *cfi_array) {
       == CFI_VENDOR_AMD_SCS) {
     return 0x0555;
   } else if (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
-	     == CFI_VENDOR_SST_WEIRD) {
+	     == CFI_VENDOR_SST_MPFP) {
     return 0x5555;
   } else {
     return 0;
@@ -66,7 +66,7 @@ static int amd_unlock_addr2(urj_flash_cfi_array_t *cfi_array) {
       == CFI_VENDOR_AMD_SCS) {
     return 0x02AA;
   } else if (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
-	     == CFI_VENDOR_SST_WEIRD) {
+	     == CFI_VENDOR_SST_MPFP) {
     return 0x2AAA;
   } else {
     return 0;
@@ -136,7 +136,7 @@ amd_flash_autodetect16 (urj_flash_cfi_array_t *cfi_array)
     return (cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
             == CFI_VENDOR_AMD_SCS || \
 	    cfi_array->cfi_chips[0]->cfi.identification_string.pri_id_code
-	    == CFI_VENDOR_SST_WEIRD);
+	    == CFI_VENDOR_SST_MPFP);
 }
 
 static int

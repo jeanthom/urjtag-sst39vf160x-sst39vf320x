@@ -302,7 +302,7 @@ urj_flash_cfi_detect (urj_bus_t *bus, uint32_t adr,
 
         /* AMD CFI Primary Vendor-Specific Extended Query Table - see [3] and [4] */
         if (cfi->identification_string.pri_id_code == CFI_VENDOR_AMD_SCS ||
-	    cfi->identification_string.pri_id_code == CFI_VENDOR_SST_WEIRD
+	    cfi->identification_string.pri_id_code == CFI_VENDOR_SST_MPFP
             && pri_vendor_tbl_adr != 0)
         {
             urj_flash_cfi_amd_pri_extened_query_structure_t *pri_vendor_tbl;
